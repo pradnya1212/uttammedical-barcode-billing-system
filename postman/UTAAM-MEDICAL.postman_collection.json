@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "UTAAM MEDICAL Starter API",
+    "_postman_id": "utaam-medical-starter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Medicine",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8086/api/medicines",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8086",
+          "path": [
+            "api",
+            "medicines"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"medicineName\": \"Test Paracetamol\",\n  \"genericName\": \"Paracetamol\",\n  \"strength\": \"650 mg\",\n  \"dosageForm\": \"TABLET\",\n  \"manufacturer\": \"Example Pharma\",\n  \"category\": \"Pain relief\",\n  \"prescriptionRequired\": false,\n  \"manufacturerBarcode\": \"8901234567890\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Lookup Barcode",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8086/api/barcode/8901234567890",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8086",
+          "path": [
+            "api",
+            "barcode",
+            "8901234567890"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Medicines",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8086/api/medicines",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8086",
+          "path": [
+            "api",
+            "medicines"
+          ]
+        }
+      }
+    }
+  ]
+}

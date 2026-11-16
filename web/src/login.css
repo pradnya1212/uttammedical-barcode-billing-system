@@ -1,0 +1,325 @@
+/* ============================================================
+   UTAAM Medical – Login / Register Page
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #f0f4f8;
+  min-height: 100vh;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.login-bg {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Brand panel (left) ──────────────────────────────────── */
+.login-brand-panel {
+  flex: 0 0 420px;
+  background: linear-gradient(145deg, #2d6a4f 0%, #1b4332 60%, #081c15 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 56px 48px;
+}
+
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-cross {
+  font-size: 32px;
+  color: #95d5b2;
+}
+
+.brand-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.brand-content h1 span {
+  color: #95d5b2;
+}
+
+.brand-tagline {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+}
+
+.brand-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.brand-features li {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-footer {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── Form panel (right) ──────────────────────────────────── */
+.login-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: #f0f4f8;
+}
+
+.login-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 440px;
+  overflow: hidden;
+}
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.login-tabs {
+  display: flex;
+  border-bottom: 1px solid #e8edf2;
+}
+
+.login-tab {
+  flex: 1;
+  padding: 16px;
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s, border-bottom 0.2s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+
+.login-tab.active {
+  color: #2d6a4f;
+  border-bottom-color: #2d6a4f;
+  font-weight: 600;
+}
+
+.login-tab:hover:not(.active) {
+  color: #374151;
+  background: #f9fafb;
+}
+
+/* ── Card body ───────────────────────────────────────────── */
+.login-card-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: -12px;
+  line-height: 1.5;
+}
+
+/* ── Alerts ──────────────────────────────────────────────── */
+.auth-alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.auth-alert--error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.auth-alert--success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
+  background: #fff;
+}
+
+.optional {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* ── Password toggle ─────────────────────────────────────── */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 44px;
+}
+
+.pass-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.pass-toggle:hover { opacity: 1; }
+
+/* ── Submit button ───────────────────────────────────────── */
+.btn-primary-auth {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #2d6a4f, #1b4332);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-top: 4px;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary-auth:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-primary-auth:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary-auth:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Switch hint ─────────────────────────────────────────── */
+.switch-hint {
+  text-align: center;
+  font-size: 0.88rem;
+  color: #6b7280;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #2d6a4f;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-btn:hover { color: #1b4332; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .login-bg { flex-direction: column; }
+
+  .login-brand-panel {
+    flex: none;
+    padding: 32px 24px;
+    min-height: auto;
+  }
+
+  .brand-features { display: none; }
+
+  .login-form-panel {
+    padding: 24px 16px 40px;
+    align-items: flex-start;
+  }
+
+  .login-card { border-radius: 16px; }
+  .login-card-body { padding: 24px 20px; }
+}
+
