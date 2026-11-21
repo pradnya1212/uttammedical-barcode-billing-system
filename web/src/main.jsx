@@ -1,4 +1,4 @@
-
+﻿
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserMultiFormatReader } from '@zxing/browser';
@@ -6,11 +6,13 @@ import {
   Activity, AlertTriangle, Barcode, Boxes, Camera, Check,
   ChevronRight, CircleDollarSign, ClipboardList, LayoutDashboard,
   Menu, PackagePlus, Pill, Plus, Printer, RefreshCw, Search,
-  ShieldCheck, X, Truck, Users, ShoppingCart, Receipt,
+  ShieldCheck, X, Truck, Users, ShoppingCart, ShoppingBag, Receipt,
   RotateCcw, Bell, FileBarChart, Trash2, ClipboardCheck,
   UserRound, Save, Mail, Phone, MapPin, Building2
 } from 'lucide-react';
 import './styles.css';
+import UtaamFooter from './UtaamFooter';
+import OrdersView from './OrdersView';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8086';
 
@@ -204,12 +206,19 @@ function AdminLogin({ onLogin }) {
             {loading ? 'Signing in…' : 'Sign In to Admin'}
           </button>
 
-          <p style={{ textAlign: 'center', margin: 0, fontSize: '0.78rem', color: '#9ca3af' }}>
-            Customer store?{' '}
-            <a href="/store.html" style={{ color: '#2d6a4f', fontWeight: 600, textDecoration: 'none' }}>
-              Go to storefront →
-            </a>
-          </p>
+          <div style={{ textAlign: 'center', margin: 0, fontSize: '0.82rem', color: '#6b7280', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div>
+              Customer looking to buy or track orders?{' '}
+              <a href="/login.html" style={{ color: '#2d6a4f', fontWeight: 600, textDecoration: 'none' }}>
+                Customer Sign In →
+              </a>
+            </div>
+            <div>
+              <a href="/store.html" style={{ color: '#6b7280', textDecoration: 'none', fontSize: '0.78rem' }}>
+                Browse Pharmacy Storefront
+              </a>
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -217,22 +226,58 @@ function AdminLogin({ onLogin }) {
 }
 
 function App() {
-  /* ── Admin auth guard ── */
+  /* ── Admin auth guard with backend token verification ── */
   const [adminLoggedIn, setAdminLoggedIn] = useState(() => {
     try {
       const s = JSON.parse(localStorage.getItem('utaam_admin_session') || 'null');
-      // Session valid for 8 hours
       return s && (Date.now() - s.loginAt < 8 * 60 * 60 * 1000);
     } catch { return false; }
   });
 
+  // Verify Admin Token with Backend on Mount
+  useEffect(() => {
+    const token = localStorage.getItem('utaam_admin_token');
+    const s = JSON.parse(localStorage.getItem('utaam_admin_session') || 'null');
+
+    if (!token && !s) {
+      window.location.href = '/admin-login.html';
+      return;
+    }
+
+    if (token) {
+      fetch(`${API}/api/auth/admin/verify-token?token=${encodeURIComponent(token)}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Admin session expired');
+          return res.json();
+        })
+        .then(data => {
+          if (!data.valid) throw new Error('Invalid admin token');
+        })
+        .catch(() => {
+          localStorage.removeItem('utaam_admin_session');
+          localStorage.removeItem('utaam_admin_token');
+          window.location.href = '/admin-login.html?expired=1';
+        });
+    }
+  }, []);
+
   function handleAdminLogout() {
+    const token = localStorage.getItem('utaam_admin_token');
+    if (token) {
+      fetch(`${API}/api/auth/admin/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      }).catch(() => {});
+    }
     localStorage.removeItem('utaam_admin_session');
-    setAdminLoggedIn(false);
+    localStorage.removeItem('utaam_admin_token');
+    window.location.href = '/admin-login.html';
   }
 
   if (!adminLoggedIn) {
-    return <AdminLogin onLogin={() => setAdminLoggedIn(true)} />;
+    window.location.href = '/admin-login.html';
+    return null;
   }
 
   const [page, setPage] = useState('dashboard');
@@ -375,7 +420,7 @@ function App() {
   function stopScanner() {
     try {
       readerRef.current?.reset();
-    } catch {}
+    } catch { }
   }
 
   function openScanner(target) {
@@ -509,11 +554,12 @@ function App() {
     b =>
       b.expiryDate &&
       new Date(`${b.expiryDate}T00:00:00`) <
-        new Date(Date.now() + 90 * 86400000)
+      new Date(Date.now() + 90 * 86400000)
   ).length;
 
   const navItems = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+    { id: 'orders', label: 'Customer Orders', icon: ShoppingBag },
     { id: 'profile', label: 'My profile', icon: UserRound },
     { id: 'medicines', label: 'Medicines', icon: Pill },
     { id: 'barcode-center', label: 'Barcode Center', icon: Barcode },
@@ -548,28 +594,28 @@ function App() {
   return (
     <div className="app-shell">
       <aside className={`sidebar ${mobileNav ? 'open' : ''}`}>
-       
-<div
-  className="brand"
-  onClick={() => go('dashboard')}
-  role="button"
-  tabIndex={0}
-  onKeyDown={e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      go('dashboard');
-    }
-  }}
-  style={{ cursor: 'pointer' }}
->
-  <div className="brand-mark">
-    <Pill size={22} />
-  </div>
-  <div>
-    <strong>UTAAM</strong>
-    <span>MEDICAL</span>
-  </div>
-</div>
+
+        <div
+          className="brand"
+          onClick={() => go('dashboard')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              go('dashboard');
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="brand-mark">
+            <Pill size={22} />
+          </div>
+          <div>
+            <strong>UTAAM</strong>
+            <span>MEDICAL</span>
+          </div>
+        </div>
 
 
         <div className="workspace-label">WORKSPACE</div>
@@ -687,6 +733,9 @@ function App() {
               </button>
             </div>
           )}
+
+          {/* CUSTOMER ORDERS MANAGEMENT */}
+          {page === 'orders' && <OrdersView />}
 
           {/* MY PROFILE */}
           {page === 'profile' && <>
@@ -1312,6 +1361,9 @@ function App() {
             />
           )}
         </div>
+
+        {/* ── Official UTAAM Footer (Inside main-area) ── */}
+        <UtaamFooter setPage={setPage} />
       </main>
 
       {/* ADD MEDICINE MODAL */}
@@ -1622,11 +1674,6 @@ function App() {
           </div>
         </Modal>
       )}
-
-      <footer className="footer">
-        © {new Date().getFullYear()} UTAAM MEDICAL
-        <span>Pharmacy inventory management</span>
-      </footer>
     </div>
   );
 }
@@ -1664,7 +1711,7 @@ const MODULES = {
     title: 'Purchase orders',
     eyebrow: 'PROCUREMENT',
     description: 'Record supplier invoices and incoming stock references.',
-    icon: ShoppingCart,
+    icon: ShoppingCart, ShoppingBag,
     fields: [
       ['supplier', 'Supplier', 'text'],
       ['invoiceNo', 'Supplier invoice number', 'text'],
@@ -1736,14 +1783,51 @@ const MODULES = {
   }
 };
 
+const DEFAULT_MODULE_DATA = {
+  suppliers: [
+    { id: 'sup-1', name: 'Cipla Healthcare Distributors', contact: 'Sachin Joshi', phone: '09822014589', email: 'orders.cipla.sangli@gmail.com', gstin: '27AABCC1234F1Z5', address: 'Plot 42, MIDC Kupwad, Sangli, MH 416436', paymentTerms: 'Net 30 days' },
+    { id: 'sup-2', name: 'Sun Pharma Wholesale Depo', contact: 'Rahul Patil', phone: '09765412389', email: 'sunpharma.kolhapur@sunpharma.com', gstin: '27AABCS5678G2Z1', address: 'Near Shiroli Toll Naka, Kolhapur, MH 416122', paymentTerms: 'Net 21 days' },
+    { id: 'sup-3', name: 'Mankind Pharma Stockist', contact: 'Amit Deshpande', phone: '09890123456', email: 'mankind.solapur@mankind.com', gstin: '27AABCM9101H3Z8', address: 'Old Pune Naka, Solapur, MH 413003', paymentTerms: 'Net 15 days' },
+    { id: 'sup-4', name: "Dr. Reddy's Laboratories Agency", contact: 'Kiran More', phone: '09422078912', email: 'drreddys.sangli@drreddys.com', gstin: '27AABCD3456J4Z2', address: 'Harbhat Road, Sangli, MH 416416', paymentTerms: 'Net 30 days' },
+    { id: 'sup-5', name: 'Abbott Healthcare Supply', contact: 'Vikram Shinde', phone: '09823145670', email: 'abbott.satara@abbott.in', gstin: '27AABCA7890K5Z9', address: 'MIDC Satara, MH 415004', paymentTerms: 'Net 30 days' }
+  ],
+  customers: [
+    { id: 'cust-1', name: 'Pradnya Rakhamaji Turewale', phone: '07719061073', email: 'turevalepradnya@gmail.com', address: 'Chhatrapati Shivaji Maharaj Petha (Hujjare Galli), Jath, Sangli, Maharashtra 416404', notes: 'Verified customer · Regular prescription' },
+    { id: 'cust-2', name: 'Ramesh Shankar Patil', phone: '09822345678', email: 'ramesh.patil@gmail.com', address: 'Station Road, Near Post Office, Jath, Sangli, MH 416404', notes: 'Diabetic and BP maintenance medication' },
+    { id: 'cust-3', name: 'Dr. Sunita Vilas Shinde', phone: '09764512340', email: 'dr.sunita.shinde@gmail.com', address: 'Civil Hospital Road, Opp. Bus Stand, Jath, Sangli, MH 416404', notes: 'Family clinic bulk order supplies' },
+    { id: 'cust-4', name: 'Aniket Dattatray Kulkarni', phone: '09423891234', email: 'aniket.kulkarni@gmail.com', address: 'Market Yard, Shivaji Chowk, Jath, Sangli, MH 416404', notes: 'General wellness & seasonal supplements' },
+    { id: 'cust-5', name: 'Kavita Prakash Jadhav', phone: '09890145678', email: 'kavita.jadhav@gmail.com', address: 'Hujjare Galli, Shivaji Maharaj Petha, Jath, Sangli, MH 416404', notes: 'Pediatric syrup and vitamin supplies' }
+  ],
+  purchases: [
+    { id: 'po-1', supplier: 'Cipla Healthcare Distributors', invoiceNo: 'INV-CIP-2026-4491', orderDate: '2026-11-14', total: 45200, status: 'Received', notes: 'Paracetamol 650mg, Azithromycin 500mg, Ascoril-D cough syrups' },
+    { id: 'po-2', supplier: 'Sun Pharma Wholesale Depo', invoiceNo: 'INV-SUN-2026-7812', orderDate: '2026-11-11', total: 32850, status: 'Received', notes: 'Amoxicillin 500mg, Pantoprazole 40mg, Cetirizine 10mg' },
+    { id: 'po-3', supplier: 'Mankind Pharma Stockist', invoiceNo: 'INV-MKD-2026-9034', orderDate: '2026-11-08', total: 18400, status: 'Received', notes: 'Multivitamins, D3 60K capsules, Omeprazole 20mg' },
+    { id: 'po-4', supplier: "Dr. Reddy's Laboratories Agency", invoiceNo: 'INV-DRR-2026-2145', orderDate: '2026-11-04', total: 61700, status: 'Received', notes: 'Cardiovascular and diabetic chronic medicines batch' }
+  ],
+  sales: [
+    { id: 'sal-1', invoiceNo: 'BILL-UTAAM-2026-1044', customer: 'Ramesh Shankar Patil', saleDate: '2026-11-17', total: 385.00, paymentMode: 'UPI', paymentStatus: 'Paid' },
+    { id: 'sal-2', invoiceNo: 'BILL-UTAAM-2026-1043', customer: 'Dr. Sunita Vilas Shinde', saleDate: '2026-11-17', total: 560.00, paymentMode: 'Cash', paymentStatus: 'Paid' },
+    { id: 'sal-3', invoiceNo: 'BILL-UTAAM-2026-1042', customer: 'Pradnya Turevale', saleDate: '2026-11-17', total: 241.00, paymentMode: 'UPI', paymentStatus: 'Paid' },
+    { id: 'sal-4', invoiceNo: 'BILL-UTAAM-2026-1041', customer: 'Aniket Dattatray Kulkarni', saleDate: '2026-11-16', total: 195.00, paymentMode: 'Card', paymentStatus: 'Paid' },
+    { id: 'sal-5', invoiceNo: 'BILL-UTAAM-2026-1040', customer: 'Kavita Prakash Jadhav', saleDate: '2026-11-16', total: 420.00, paymentMode: 'UPI', paymentStatus: 'Paid' },
+    { id: 'sal-6', invoiceNo: 'BILL-UTAAM-2026-1039', customer: 'Walk-in Customer (Jath)', saleDate: '2026-11-15', total: 125.00, paymentMode: 'Cash', paymentStatus: 'Paid' }
+  ],
+  returns: [
+    { id: 'ret-1', returnType: 'Customer return', referenceNo: 'BILL-UTAAM-2026-1031', party: 'Ramesh Patil', returnDate: '2026-11-12', reason: 'Doctor adjusted dosage from 500mg to 250mg', amount: 85.00, status: 'Refunded' },
+    { id: 'ret-2', returnType: 'Supplier return', referenceNo: 'INV-MKD-2026-9034', party: 'Mankind Pharma Stockist', returnDate: '2026-11-09', reason: 'Outer carton seal damaged in transit', amount: 950.00, status: 'Approved' }
+  ]
+};
+
 function BusinessModule({ moduleId }) {
   const cfg = MODULES[moduleId];
 
   const [rows, setRows] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem(`utaam_${moduleId}`) || '[]');
+      const stored = JSON.parse(localStorage.getItem(`utaam_${moduleId}`) || '[]');
+      if (stored && stored.length > 0) return stored;
+      return DEFAULT_MODULE_DATA[moduleId] || [];
     } catch {
-      return [];
+      return DEFAULT_MODULE_DATA[moduleId] || [];
     }
   });
 

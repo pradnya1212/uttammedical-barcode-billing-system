@@ -323,3 +323,275 @@ body {
   .login-card-body { padding: 24px 20px; }
 }
 
+
+/* ── Email Verification / OTP Styles ───────────────────────── */
+.verify-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.verify-badge-icon {
+  font-size: 38px;
+  margin: 0 auto 4px;
+}
+
+.otp-input {
+  font-size: 1.6rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 8px !important;
+  text-align: center !important;
+  padding: 14px !important;
+  background: #f8fafc !important;
+  border: 2px solid #2d6a4f !important;
+  color: #1b4332 !important;
+}
+
+.otp-preview-card {
+  background: #f0fdf4;
+  border: 1.5px dashed #22c55e;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.otp-preview-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.otp-preview-badge {
+  display: inline-block;
+  background: #22c55e;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.otp-preview-card p {
+  font-size: 12px;
+  color: #166534;
+  margin: 0 0 6px 0;
+}
+
+.otp-code-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #14532d;
+}
+
+.otp-code-display strong {
+  font-size: 18px;
+  font-family: monospace;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: #15803d;
+  letter-spacing: 2px;
+}
+
+.otp-click-hint {
+  font-size: 11px;
+  color: #15803d;
+  font-weight: 500;
+}
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  background: #f9fafb;
+  overflow: hidden;
+}
+
+.phone-prefix {
+  padding: 11px 12px;
+  background: #e5e7eb;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-right: 1.5px solid #d1d5db;
+  user-select: none;
+}
+
+.phone-input-wrapper input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.field-hint {
+  font-size: 0.76rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-top: 6px;
+}
+
+.back-btn {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+/* ── Login Type Switcher (Customer vs Admin) ───────────────── */
+.login-type-switcher {
+  display: flex;
+  background: #f1f5f9;
+  padding: 6px;
+  gap: 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.switch-opt {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.switch-opt.active-opt {
+  background: white;
+  color: #1e293b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.admin-switch-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.login-portal-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.admin-link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.admin-link-pill:hover {
+  background: #1e293b;
+  color: white;
+  border-color: #1e293b;
+}
+
+/* ── Admin Login Specific Theming ─────────────────────────── */
+.admin-login-theme .admin-brand-side {
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #064e3b 100%) !important;
+}
+
+.admin-logo-badge {
+  background: rgba(52, 211, 153, 0.15) !important;
+  border: 1px solid rgba(52, 211, 153, 0.3) !important;
+}
+
+.admin-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  padding-left: 38px !important;
+}
+
+.admin-hint-box {
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #475569;
+}
+
+.admin-hint-box code {
+  background: #e2e8f0;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.admin-btn {
+  background: linear-gradient(135deg, #0f766e, #115e59) !important;
+}
+
+.admin-btn:hover {
+  background: linear-gradient(135deg, #115e59, #042f2e) !important;
+}
+
+.admin-footer-links {
+  text-align: center;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
