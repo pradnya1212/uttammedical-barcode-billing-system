@@ -10,6 +10,8 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         store: resolve(__dirname, 'store.html'),
         login: resolve(__dirname, 'login.html'),
+        adminLogin: resolve(__dirname, 'admin-login.html'),
+        track: resolve(__dirname, 'track-order.html'),
       },
     },
   },

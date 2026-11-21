@@ -24,6 +24,18 @@ public class Customer {
 
     private String address;
 
+    @Column(name = "email_verified")
+    private Boolean emailVerified = false;
+
+    @Column(name = "verification_code", length = 10)
+    private String verificationCode;
+
+    @Column(name = "code_expiry")
+    private LocalDateTime codeExpiry;
+
+    @Column(name = "auth_token", length = 100)
+    private String authToken;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -46,7 +58,18 @@ public class Customer {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
+    public Boolean getEmailVerified() { return emailVerified != null ? emailVerified : false; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getVerificationCode() { return verificationCode; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+
+    public LocalDateTime getCodeExpiry() { return codeExpiry; }
+    public void setCodeExpiry(LocalDateTime codeExpiry) { this.codeExpiry = codeExpiry; }
+
+    public String getAuthToken() { return authToken; }
+    public void setAuthToken(String authToken) { this.authToken = authToken; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
-

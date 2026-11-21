@@ -1,4 +1,4 @@
-
+﻿
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -120,21 +120,53 @@ async function get(path) {
 }
 
 function App() {
-  // ── Auth session ──────────────────────────────────────────
+  // ── Auth session & Token Verification ──────────────────────
   const [session, setSession] = useState(() => {
     try { return JSON.parse(localStorage.getItem('utaam_session') || 'null'); }
     catch { return null; }
   });
+  const [tokenVerified, setTokenVerified] = useState(false);
 
-  // Redirect to login if not signed in
+  // Verify Customer Token on Mount
   useEffect(() => {
-    if (!session) {
+    if (!session || !session.authToken) {
       window.location.href = '/login.html';
+      return;
     }
-  }, [session]);
+
+    // Call backend token verification
+    fetch(`${API}/api/auth/verify-token?token=${encodeURIComponent(session.authToken)}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Token verification failed');
+        return res.json();
+      })
+      .then(data => {
+        if (data.valid || data.success) {
+          setTokenVerified(true);
+          // Sync verified customer details
+          if (data.customerId) {
+            setCustomer(prev => ({
+              ...prev,
+              name: data.name || prev.name,
+              phone: data.phone || prev.phone,
+              email: data.email || prev.email,
+              address: data.address || prev.address
+            }));
+          }
+        } else {
+          throw new Error('Token invalid');
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('utaam_session');
+        localStorage.removeItem('utaam_customer');
+        window.location.href = '/login.html?session_expired=1';
+      });
+  }, []);
 
   function handleLogout() {
     localStorage.removeItem('utaam_session');
+    localStorage.removeItem('utaam_customer');
     window.location.href = '/login.html';
   }
 
@@ -524,13 +556,7 @@ function App() {
             <i>{cartCount}</i>
           </button>
 
-          <a
-            className="admin-shortcut"
-            href="/"
-            title="Admin workspace"
-          >
-            Admin
-          </a>
+
 
           {session && (
             <div className="user-menu">
@@ -745,9 +771,14 @@ function App() {
               )}
 
               {!items.length && (
-                <a href="/">
-                  Open admin workspace <ArrowRight size={15} />
-                </a>
+                <button
+                  type="button"
+                  className="refresh-btn"
+                  onClick={() => loadMedicines()}
+                  style={{ marginTop: '12px' }}
+                >
+                  Reload catalog
+                </button>
               )}
             </div>
           ) : (
@@ -897,7 +928,7 @@ function App() {
           <a href="#home">Home</a>
           <a href="#shop">Shop products</a>
           <a href="#benefits">Why UTAAM</a>
-          <a href="/">Admin workspace</a>
+          <a href="/track-order.html">Track your orders</a>
         </div>
 
         <div>

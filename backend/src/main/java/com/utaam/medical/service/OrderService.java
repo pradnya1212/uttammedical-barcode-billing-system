@@ -227,25 +227,42 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    // CUSTOMER: GET ALL ORDERS FOR CUSTOMER PROFILE
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getCustomerOrders(String email, String phone) {
+        if ((email == null || email.isBlank()) && (phone == null || phone.isBlank())) {
+            return Collections.emptyList();
+        }
+
+        String searchEmail = email != null ? email.trim() : "";
+        String searchPhone = phone != null ? phone.trim() : "";
+
+        List<CustomerOrder> orders = orderRepository.findByCustomerEmailOrPhone(searchEmail, searchPhone);
+        return orders.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     // CUSTOMER: TRACK ORDER
     @Transactional(readOnly = true)
     public OrderResponse trackOrder(String orderNumber, String phone) {
 
         CustomerOrder order = orderRepository
-                .findByOrderNumber(orderNumber)
+                .findByOrderNumber(orderNumber.trim())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Order not found"
+                        "Order not found for order number " + orderNumber
                 ));
 
-        if (phone == null ||
-                order.getCustomerPhone() == null ||
-                !order.getCustomerPhone().equals(phone.trim())) {
-
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Order not found for provided details"
-            );
+        if (phone != null && !phone.isBlank()) {
+            String cleanPhone = phone.replaceAll("[\\s\\-\\(\\)]", "");
+            String orderPhone = order.getCustomerPhone() != null ? order.getCustomerPhone().replaceAll("[\\s\\-\\(\\)]", "") : "";
+            if (!orderPhone.endsWith(cleanPhone) && !cleanPhone.endsWith(orderPhone)) {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Phone number does not match registered order details"
+                );
+            }
         }
 
         return mapToResponse(order);

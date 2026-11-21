@@ -8,6 +8,9 @@ public class AuthResponse {
     private String email;
     private String phone;
     private String address;
+    private boolean emailVerified;
+    private String verificationCode;
+    private String authToken;
 
     public AuthResponse() {}
 
@@ -36,5 +39,13 @@ public class AuthResponse {
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
-}
 
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getVerificationCode() { return verificationCode; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+
+    public String getAuthToken() { return authToken; }
+    public void setAuthToken(String authToken) { this.authToken = authToken; }
+}
